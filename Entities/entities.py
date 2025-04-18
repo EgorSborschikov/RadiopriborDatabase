@@ -4,12 +4,14 @@ from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
+# Статус заказа
 class OrderStatus(Base):
     __tablename__ = 'order_status'
     status_id = Column(Integer, primary_key=True)
     status_name = Column(String, unique=True, nullable=False)
     orders = relationship("Order", back_populates="status")
 
+# Заказы
 class Order(Base):
     __tablename__ = 'orders'
     order_id = Column(Integer, primary_key=True)
@@ -21,6 +23,7 @@ class Order(Base):
     quality_controls = relationship("QualityControl", back_populates="order")
     status = relationship("OrderStatus", back_populates="orders")
 
+# Детали
 class Part(Base):
     __tablename__ = 'parts'
     part_id = Column(Integer, primary_key=True)
@@ -29,6 +32,7 @@ class Part(Base):
     tech_cards = relationship("TechCard", back_populates="part")
     order_parts = relationship("OrderPart", back_populates="part")
 
+# Технологические карты
 class TechCard(Base):
     __tablename__ = 'tech_cards'
     tech_card_id = Column(Integer, primary_key=True)
@@ -37,6 +41,7 @@ class TechCard(Base):
     part = relationship("Part", back_populates="tech_cards")
     machine_programs = relationship("MachineProgram", back_populates="tech_card")
 
+# Программы для станков
 class MachineProgram(Base):
     __tablename__ = 'machine_programs'
     program_id = Column(Integer, primary_key=True)
@@ -45,6 +50,7 @@ class MachineProgram(Base):
     tech_card = relationship("TechCard", back_populates="machine_programs")
     equipment_programs = relationship("EquipmentProgram", back_populates="machine_program")
 
+# Сотрудники
 class Employee(Base):
     __tablename__ = 'employees'
     employee_id = Column(Integer, primary_key=True)
@@ -53,12 +59,14 @@ class Employee(Base):
     department_id = Column(Integer, ForeignKey('departments.department_id'))
     orders = relationship("EmployeeOrder", back_populates="employee")
 
+# Департаменты
 class Department(Base):
     __tablename__ = 'departments'
     department_id = Column(Integer, primary_key=True)
     department_name = Column(String)
     employees = relationship("Employee", back_populates="department")
 
+# Клиенты
 class Customer(Base):
     __tablename__ = 'customers'
     customer_id = Column(Integer, primary_key=True)
@@ -66,6 +74,7 @@ class Customer(Base):
     contact_info = Column(String)
     orders = relationship("Order", back_populates="customer")
 
+# Контроль качества
 class QualityControl(Base):
     __tablename__ = 'quality_control'
     qc_id = Column(Integer, primary_key=True)
@@ -74,6 +83,7 @@ class QualityControl(Base):
     qc_date = Column(Date)
     order = relationship("Order", back_populates="quality_controls")
 
+# Заказанные детали
 class OrderPart(Base):
     __tablename__ = 'order_parts'
     order_id = Column(Integer, ForeignKey('orders.order_id'), primary_key=True)
@@ -82,6 +92,7 @@ class OrderPart(Base):
     order = relationship("Order", back_populates="parts")
     part = relationship("Part", back_populates="order_parts")
 
+# Сотрудник по выбранному заказу
 class EmployeeOrder(Base):
     __tablename__ = 'employee_orders'
     employee_id = Column(Integer, ForeignKey('employees.employee_id'), primary_key=True)
@@ -90,6 +101,7 @@ class EmployeeOrder(Base):
     employee = relationship("Employee", back_populates="orders")
     order = relationship("Order", back_populates="employees")
 
+# Оборудование
 class Equipment(Base):
     __tablename__ = 'equipment'
     equipment_id = Column(Integer, primary_key=True)
@@ -97,6 +109,7 @@ class Equipment(Base):
     equipment_type = Column(String)
     equipment_programs = relationship("EquipmentProgram", back_populates="equipment")
 
+# Программы для оборудования
 class EquipmentProgram(Base):
     __tablename__ = 'equipment_programs'
     equipment_id = Column(Integer, ForeignKey('equipment.equipment_id'), primary_key=True)
@@ -105,6 +118,7 @@ class EquipmentProgram(Base):
     equipment = relationship("Equipment", back_populates="equipment_programs")
     machine_program = relationship("MachineProgram", back_populates="equipment_programs")
 
+# Поставщики
 class Supplier(Base):
     __tablename__ = 'suppliers'
     supplier_id = Column(Integer, primary_key=True)
@@ -112,6 +126,7 @@ class Supplier(Base):
     contact_info = Column(String)
     supplies = relationship("Supply", back_populates="supplier")
 
+# Поставки
 class Supply(Base):
     __tablename__ = 'supplies'
     supply_id = Column(Integer, primary_key=True)
